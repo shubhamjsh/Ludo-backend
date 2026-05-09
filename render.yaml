@@ -1,0 +1,47 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: ludo-postgres
+    env: docker
+    plan: free
+    region: oregon
+    databases:
+      - name: ludo_db
+        databaseName: ludo_db
+        user: ludo_user
+
+  # Ludo Backend API
+  - type: web
+    name: ludo-api
+    env: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: SERVER_PORT
+        value: 8080
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DB_HOST
+        fromDatabase:
+          name: ludo-postgres
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: ludo-postgres
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: ludo-postgres
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: ludo-postgres
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: ludo-postgres
+          property: database
+      - key: DB_SSLMODE
+        value: require

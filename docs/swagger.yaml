@@ -1,0 +1,841 @@
+basePath: /
+definitions:
+  game.CreateGameRequest:
+    properties:
+      bet_amount:
+        minimum: 0
+        type: integer
+      is_private:
+        type: boolean
+      max_players:
+        maximum: 4
+        minimum: 2
+        type: integer
+      room_code:
+        type: string
+      room_name:
+        maxLength: 100
+        minLength: 3
+        type: string
+    required:
+    - max_players
+    - room_name
+    type: object
+  game.CreateGameResponse:
+    properties:
+      created_by:
+        type: integer
+      game_id:
+        type: string
+      room_code:
+        type: string
+      status:
+        type: string
+    type: object
+  game.CreateLocalGameRequest:
+    properties:
+      player_names:
+        items:
+          type: string
+        maxItems: 4
+        minItems: 2
+        type: array
+      room_name:
+        maxLength: 100
+        minLength: 3
+        type: string
+    required:
+    - player_names
+    - room_name
+    type: object
+  game.CreateLocalGameResponse:
+    properties:
+      game_id:
+        type: string
+      players:
+        items:
+          $ref: '#/definitions/game.LocalPlayerInfo'
+        type: array
+      status:
+        type: string
+    type: object
+  game.JoinGameRequest:
+    properties:
+      game_id:
+        type: string
+      room_code:
+        type: string
+    required:
+    - game_id
+    type: object
+  game.JoinGameResponse:
+    properties:
+      current_players:
+        type: integer
+      game_id:
+        type: string
+      max_players:
+        type: integer
+      player_color:
+        type: string
+      position:
+        type: integer
+    type: object
+  game.LeaveGameResponse:
+    properties:
+      game_id:
+        type: string
+      status:
+        type: string
+    type: object
+  game.LocalPlayerInfo:
+    properties:
+      color:
+        type: string
+      name:
+        type: string
+      token:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  game.MoveTokenRequest:
+    properties:
+      steps:
+        maximum: 6
+        minimum: 1
+        type: integer
+      token_index:
+        maximum: 3
+        minimum: 0
+        type: integer
+    required:
+    - steps
+    - token_index
+    type: object
+  game.MoveTokenResponse:
+    properties:
+      coins_lost_per_player:
+        type: integer
+      coins_won:
+        type: integer
+      extra_turn:
+        type: boolean
+      from_position:
+        type: integer
+      game_completed:
+        type: boolean
+      game_id:
+        type: string
+      killed_opponent:
+        type: boolean
+      killed_opponent_color:
+        type: string
+      next_turn_color:
+        type: string
+      next_turn_player_id:
+        type: integer
+      player_color:
+        type: string
+      player_id:
+        type: integer
+      to_position:
+        type: integer
+      token_index:
+        type: integer
+      token_reached_home:
+        type: boolean
+      winner_id:
+        type: integer
+    type: object
+  game.PlayerInfo:
+    properties:
+      color:
+        type: string
+      name:
+        type: string
+      position:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  game.RollDiceResponse:
+    properties:
+      can_move:
+        type: boolean
+      dice_value:
+        type: integer
+      extra_turn:
+        type: boolean
+      game_id:
+        type: string
+      player_color:
+        type: string
+      player_id:
+        type: integer
+      valid_tokens:
+        items:
+          type: integer
+        type: array
+    type: object
+  game.SkipTurnResponse:
+    properties:
+      dice_value:
+        type: integer
+      game_id:
+        type: string
+      next_turn_color:
+        type: string
+      next_turn_player_id:
+        type: integer
+      skipped_player_color:
+        type: string
+      skipped_player_id:
+        type: integer
+    type: object
+  game.StartGameResponse:
+    properties:
+      game_id:
+        type: string
+      players:
+        items:
+          $ref: '#/definitions/game.PlayerInfo'
+        type: array
+      started_at:
+        type: string
+      status:
+        type: string
+    type: object
+  models.AuthResponse:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  models.GuestLoginRequest:
+    properties:
+      device_id:
+        type: string
+    required:
+    - device_id
+    type: object
+  models.LoginRequest:
+    properties:
+      email_or_phone:
+        type: string
+      password:
+        type: string
+    required:
+    - email_or_phone
+    - password
+    type: object
+  models.SignupRequest:
+    properties:
+      email:
+        type: string
+      name:
+        maxLength: 50
+        minLength: 2
+        type: string
+      password:
+        maxLength: 100
+        minLength: 6
+        type: string
+      phone:
+        maxLength: 15
+        minLength: 10
+        type: string
+    required:
+    - name
+    - password
+    type: object
+  models.UpdateProfileRequest:
+    properties:
+      avatar_url:
+        type: string
+      name:
+        maxLength: 50
+        minLength: 2
+        type: string
+    type: object
+  models.User:
+    properties:
+      avatar_url:
+        type: string
+      coins:
+        type: integer
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      is_guest:
+        type: boolean
+      last_login_at:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  utils.Response:
+    properties:
+      data: {}
+      error:
+        type: string
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@ludogame.com
+    name: API Support
+  description: REST API for Ludo Game with authentication and user management
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Ludo Game API
+  version: "1.0"
+paths:
+  /api/auth/guest-login:
+    post:
+      consumes:
+      - application/json
+      description: Create a temporary guest account without email/password
+      parameters:
+      - description: Guest Login Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.GuestLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Guest login successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.AuthResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Create guest account
+      tags:
+      - Authentication
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user with email/phone and password
+      parameters:
+      - description: Login Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.AuthResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Login with credentials
+      tags:
+      - Authentication
+  /api/auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account with email/phone and password
+      parameters:
+      - description: Signup Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignupRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.AuthResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "409":
+          description: Email or phone already exists
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Register a new user
+      tags:
+      - Authentication
+  /api/game/{id}/leave:
+    post:
+      consumes:
+      - application/json
+      description: Leave a game room (creator leaving will cancel the game)
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Left game successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/game.LeaveGameResponse'
+              type: object
+        "400":
+          description: Not in this game
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Game not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Leave a game
+      tags:
+      - Game
+  /api/game/{id}/move-token:
+    post:
+      consumes:
+      - application/json
+      description: Move a token based on dice roll
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Move Token Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/game.MoveTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token moved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/game.MoveTokenResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Not your turn
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Game not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Move a token
+      tags:
+      - Game Actions
+  /api/game/{id}/roll-dice:
+    post:
+      consumes:
+      - application/json
+      description: Roll the dice for your turn (returns 1-6)
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Dice rolled successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/game.RollDiceResponse'
+              type: object
+        "400":
+          description: Invalid request or already rolled
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Not your turn
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Game not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Roll the dice
+      tags:
+      - Game Actions
+  /api/game/{id}/skip-turn:
+    post:
+      consumes:
+      - application/json
+      description: Skip turn when no valid moves are available
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Turn skipped successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/game.SkipTurnResponse'
+              type: object
+        "400":
+          description: Invalid request or has valid moves
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Not your turn
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Game not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Skip turn
+      tags:
+      - Game Actions
+  /api/game/{id}/start:
+    post:
+      consumes:
+      - application/json
+      description: Start a game (only the creator can start)
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Game started successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/game.StartGameResponse'
+              type: object
+        "400":
+          description: Not enough players or game already started
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Only creator can start the game
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Game not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Start a game
+      tags:
+      - Game
+  /api/game/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new game room with specified settings
+      parameters:
+      - description: Create Game Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/game.CreateGameRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Game created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/game.CreateGameResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "402":
+          description: Insufficient coins
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Create a new game
+      tags:
+      - Game
+  /api/game/create-local:
+    post:
+      consumes:
+      - application/json
+      description: Create a game for local multiplayer on a single device (no auth
+        required)
+      parameters:
+      - description: Create Local Game Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/game.CreateLocalGameRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Local game created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/game.CreateLocalGameResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Create local multiplayer game
+      tags:
+      - Game
+  /api/game/join:
+    post:
+      consumes:
+      - application/json
+      description: Join an existing game room
+      parameters:
+      - description: Join Game Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/game.JoinGameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Joined game successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/game.JoinGameResponse'
+              type: object
+        "400":
+          description: Invalid request or game full
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "402":
+          description: Insufficient coins
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Invalid room code
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Game not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "409":
+          description: Already in game
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Join a game
+      tags:
+      - Game
+  /api/user/profile:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the authenticated user's profile information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Profile retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get user profile
+      tags:
+      - User
+schemes:
+- http
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
